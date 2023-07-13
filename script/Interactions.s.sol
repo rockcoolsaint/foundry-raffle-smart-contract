@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 import {Script, console} from "forge-std/Script.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 import {Raffle} from "../src/Raffle.sol";
-import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
+import {DevOpsTools} from "lib/foundry-devops/src/DevOpsTools.sol";
 // import {VRFCoordinatorV2Mock} from "../test/mocks/VRFCoordinatorV2Mock.sol";
 import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
 import {LinkToken} from "../test/mocks/LinkToken.sol";
@@ -12,17 +12,9 @@ import {LinkToken} from "../test/mocks/LinkToken.sol";
 contract CreateSubscription is Script {
     function createSubscriptionUsingConfig() public returns (uint64) {
         HelperConfig helperConfig = new HelperConfig();
-        (
-            ,
-            ,
-            ,
-            ,
-            ,
-            address vrfCoordinatorV2,
-            ,
-            uint256 deployerKey
-        ) = helperConfig.activeNetworkConfig();
-        return createSubscription(vrfCoordinatorV2, deployerKey);
+        (, , address vrfCoordinator, , , , , uint256 deployerKey) = helperConfig
+            .activeNetworkConfig();
+        return createSubscription(vrfCoordinator, deployerKey);
     }
 
     function createSubscription(
@@ -65,16 +57,16 @@ contract AddConsumer is Script {
     function addConsumerUsingConfig(address mostRecentlyDeployed) public {
         HelperConfig helperConfig = new HelperConfig();
         (
+            ,
+            ,
+            address vrfCoordinator,
+            ,
             uint64 subId,
             ,
-            ,
-            ,
-            ,
-            address vrfCoordinatorV2,
-            ,
+            address link,
             uint256 deployerKey
         ) = helperConfig.activeNetworkConfig();
-        addConsumer(mostRecentlyDeployed, vrfCoordinatorV2, subId, deployerKey);
+        addConsumer(mostRecentlyDeployed, vrfCoordinator, subId, deployerKey);
     }
 
     function run() external {
@@ -92,12 +84,12 @@ contract FundSubscription is Script {
     function fundSubscriptionUsingConfig() public {
         HelperConfig helperConfig = new HelperConfig();
         (
-            uint64 subId,
-            ,
-            ,
             ,
             ,
             address vrfCoordinatorV2,
+            ,
+            uint64 subId,
+            ,
             address link,
             uint256 deployerKey
         ) = helperConfig.activeNetworkConfig();

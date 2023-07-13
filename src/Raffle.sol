@@ -23,7 +23,7 @@ contract Raffle is VRFConsumerBaseV2 {
     /** Types declarations */
     enum RaffleState {
         OPEN,
-        CALCULATEING
+        CALCULATING
     }
 
     /** State Variables */
@@ -108,7 +108,7 @@ contract Raffle is VRFConsumerBaseV2 {
         // if ((block.timestamp - s_lastTimeStamp) < i_interval) {
         //     revert();
         // }
-        s_raffleState = RaffleState.CALCULATEING;
+        s_raffleState = RaffleState.CALCULATING;
         // 1. Request the RNG <-
         // 2. Get the random number
         i_vrfCoordinator.requestRandomWords(
@@ -152,5 +152,17 @@ contract Raffle is VRFConsumerBaseV2 {
 
     function getPlayer(uint256 indexofPlayer) external view returns (address) {
         return s_players[indexofPlayer];
+    }
+
+    function getRecentWinner() external view returns (address) {
+        return s_recentWinner;
+    }
+
+    function getLengthOfPlayers() external view returns (uint256) {
+        return s_players.length;
+    }
+
+    function getLastTimeStamp() external view returns (uint256) {
+        return s_lastTimeStamp;
     }
 }
